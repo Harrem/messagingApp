@@ -7,13 +7,13 @@ class CloudStore {
   void writeMessage(message, user) {
     firestore
         .collection("messages")
-        .add({'msg': message, 'user': user})
+        .add({'msg': message, 'user': user, 'date': DateTime.now()})
         .then((value) => debugPrint("user Added"))
         .catchError((e) => e);
   }
 
   Stream<QuerySnapshot> readMessage() {
-    var res = firestore.collection("messages").snapshots();
+    var res = firestore.collection("messages").orderBy('date').snapshots();
     return res;
   }
 }
