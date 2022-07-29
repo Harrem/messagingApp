@@ -1,7 +1,7 @@
 # Messaging App
 
 A new Flutter project for direct messaging. 
-![](Screen Shot 2022-07-29 at 15.00.00.png)
+![](https://github.com/Harrem/messagingApp/blob/master/Screen%20Shot%202022-07-29%20at%2015.00.00.png)
 
 ## Getting Started
 
