@@ -26,9 +26,12 @@ class _MessageScreenState extends State<MessageScreen> {
                 child: StreamBuilder(
                   stream: CloudStore().readMessage(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    return Container(
-                      child: Text(snapshot.data),
-                    );
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Container(
+                        child: Text(snapshot.data['messages']),
+                      );
+                    }
+                    return Text("failed");
                   },
                 ),
               ),
