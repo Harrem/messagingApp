@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "426531506044",
+    "project_id": "h-messaging",
+    "storage_bucket": "h-messaging.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426531506044:android:0932fbc2f8bc52dcd2c6f9",
+        "android_client_info": {
+          "package_name": "com.example.assignment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426531506044-9tji0onnr49m42jfq5eidk3lnm9jskq2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWarVU1lNEy2j1jFpE4LQzLZ-PCig8W14"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426531506044-9tji0onnr49m42jfq5eidk3lnm9jskq2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
