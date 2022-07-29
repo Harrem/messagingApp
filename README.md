@@ -1,6 +1,7 @@
-# assignment
+# Messaging App
 
-A new Flutter project.
+A new Flutter project for direct messaging. 
+![](Screen Shot 2022-07-29 at 15.00.00.png)
 
 ## Getting Started
 
