@@ -1,15 +1,18 @@
+import 'package:assignment/screens/home.dart';
 import 'package:assignment/services/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+import 'sign_up.dart';
+
+class SignIn extends StatefulWidget {
+  const SignIn({Key? key}) : super(key: key);
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignIn> createState() => _SignInState();
 }
 
-class _LoginState extends State<Login> {
+class _SignInState extends State<SignIn> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   final Auth auth = Auth();
   TextEditingController usernameText = TextEditingController();
@@ -78,12 +81,15 @@ class _LoginState extends State<Login> {
                             email: email, password: password)
                         .onError(
                       (error, stackTrace) async {
+                        bool isShown = true;
                         ScaffoldMessenger.of(context).showMaterialBanner(
                           MaterialBanner(
                             content: Text("$error"),
                             actions: [
+                              //remove banner when pressed
                               TextButton(
                                 onPressed: () async {
+                                  isShown = false;
                                   ScaffoldMessenger.of(context)
                                       .clearMaterialBanners();
                                 },
@@ -92,10 +98,24 @@ class _LoginState extends State<Login> {
                             ],
                           ),
                         );
-                        await Future.delayed(const Duration(seconds: 3));
-                        ScaffoldMessenger.of(context).clearMaterialBanners();
+                        // remove banner after 3 seconds
+                        if (isShown) {
+                          await Future.delayed(const Duration(seconds: 3));
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).clearMaterialBanners();
+                        }
+                        return null;
                       },
                     );
+                    if (auth.checkUser()) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => Home(),
+                        ),
+                      );
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,18 +126,6 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    auth.signout();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("PROCEED"),
-                      Icon(Icons.arrow_right_rounded),
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: Container(
                     alignment: Alignment.bottomCenter,
@@ -130,7 +138,15 @@ class _LoginState extends State<Login> {
                           child: const Text("Forgot Password?"),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const SignUp(),
+                              ),
+                            );
+                          },
                           child: const Text("Create Account"),
                         )
                       ],

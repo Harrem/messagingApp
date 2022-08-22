@@ -1,8 +1,7 @@
-import 'package:assignment/screens/login.dart';
+import 'package:assignment/screens/sign_in.dart';
 import 'package:assignment/theme/custom_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
@@ -22,8 +21,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Messenger',
-      theme: CustomTheme().lightTheme,
-      home: const Login(),
+      theme: CustomTheme().darkTheme,
+      home: const SignIn(),
     );
   }
 }
