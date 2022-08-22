@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+///Custom Theme Data for light and  Dark Theme Mode
 class CustomTheme {
   var borderRadius = 7.0;
   var inputPadding = const EdgeInsets.symmetric(horizontal: 10, vertical: 24);
   var buttonPadding = const EdgeInsets.symmetric(horizontal: 10, vertical: 25);
-
+//Light mode
   ThemeData get lightTheme {
     return ThemeData(
         primarySwatch:
             createMaterialColor(const Color.fromARGB(255, 35, 76, 110)),
         // primaryColor: Colors.amber,
         brightness: Brightness.light,
+        // fontFamily: GoogleFonts.montserrat().fontFamily,
         scaffoldBackgroundColor: Colors.indigo[50],
         textTheme: const TextTheme(
           headline4: TextStyle(
@@ -43,6 +46,7 @@ class CustomTheme {
         ));
   }
 
+// Dark Mode
   ThemeData get darkTheme {
     return ThemeData(
       // colorScheme: Colors.red,

@@ -1,3 +1,5 @@
+import 'package:assignment/services/authentication.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -9,6 +11,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  final Auth auth = Auth();
+  TextEditingController usernameText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
   bool? lightTheme;
   @override
   Widget build(BuildContext context) {
@@ -52,7 +57,67 @@ class _LoginState extends State<Login> {
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 const SizedBox(height: 60),
-                LoginForm(formkey: formkey),
+                TextFormField(
+                  controller: usernameText,
+                  decoration: const InputDecoration(labelText: "USERNAME"),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: passwordText,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: "PASSWORD"),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    var email = usernameText.text;
+                    var password = passwordText.text;
+
+                    User? user = await auth
+                        .signInWithEmailAndPassword(
+                            email: email, password: password)
+                        .onError(
+                      (error, stackTrace) async {
+                        ScaffoldMessenger.of(context).showMaterialBanner(
+                          MaterialBanner(
+                            content: Text("$error"),
+                            actions: [
+                              TextButton(
+                                onPressed: () async {
+                                  ScaffoldMessenger.of(context)
+                                      .clearMaterialBanners();
+                                },
+                                child: const Text("Dismiss"),
+                              )
+                            ],
+                          ),
+                        );
+                        await Future.delayed(const Duration(seconds: 3));
+                        ScaffoldMessenger.of(context).clearMaterialBanners();
+                      },
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text("PROCEED"),
+                      Icon(Icons.arrow_right_rounded),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    auth.signout();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text("PROCEED"),
+                      Icon(Icons.arrow_right_rounded),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: Container(
                     alignment: Alignment.bottomCenter,
@@ -77,43 +142,6 @@ class _LoginState extends State<Login> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class LoginForm extends StatelessWidget {
-  LoginForm({Key? key, required this.formkey}) : super(key: key);
-  final GlobalKey<FormState> formkey;
-  TextEditingController usernameText = TextEditingController();
-  TextEditingController passwordText = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: usernameText,
-          decoration: const InputDecoration(labelText: "USERNAME"),
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          controller: passwordText,
-          obscureText: true,
-          decoration: const InputDecoration(labelText: "PASSWORD"),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {},
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text("PROCEED"),
-              Icon(Icons.arrow_right_rounded),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'package:assignment/screens/home.dart';
 import 'package:assignment/screens/login.dart';
 import 'package:assignment/theme/custom_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Messenger',
-      theme: CustomTheme().darkTheme,
+      theme: CustomTheme().lightTheme,
       home: const Login(),
     );
   }
