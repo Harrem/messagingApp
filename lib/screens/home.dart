@@ -1,5 +1,4 @@
 import 'package:assignment/widgets/custom_widgets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -11,7 +10,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    double? width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
