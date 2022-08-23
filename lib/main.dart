@@ -1,3 +1,4 @@
+import 'package:assignment/screens/create_profile.dart';
 import 'package:assignment/screens/sign_in.dart';
 import 'package:assignment/theme/custom_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,8 +21,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Messenger',
-      theme: CustomTheme().darkTheme,
-      home: const SignIn(),
+      theme: CustomTheme().lightTheme,
+      home: const CreateProfile(),
     );
   }
 }

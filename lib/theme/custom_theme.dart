@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 ///Custom Theme Data for light and  Dark Theme Mode
 class CustomTheme {
@@ -9,21 +8,19 @@ class CustomTheme {
 //Light mode
   ThemeData get lightTheme {
     return ThemeData(
-        primarySwatch:
-            createMaterialColor(const Color.fromARGB(255, 35, 76, 110)),
-        // primaryColor: Colors.amber,
+        colorScheme: const ColorScheme.light(
+          primary: Color.fromARGB(255, 35, 76, 110),
+          background: Color.fromRGBO(232, 234, 246, 1),
+        ),
         brightness: Brightness.light,
-        // fontFamily: GoogleFonts.montserrat().fontFamily,
-        scaffoldBackgroundColor: Colors.indigo[50],
+        // scaffoldBackgroundColor: Colors.indigo[50],
         textTheme: const TextTheme(
           headline4: TextStyle(
               color: Color.fromARGB(255, 36, 73, 100),
               fontWeight: FontWeight.bold),
-          subtitle1: TextStyle(
-            color: Color.fromARGB(255, 160, 175, 185),
-          ),
+          subtitle2: TextStyle(color: Colors.grey),
         ),
-        dividerTheme: DividerThemeData(color: Colors.transparent),
+        dividerTheme: const DividerThemeData(color: Colors.transparent),
         inputDecorationTheme: InputDecorationTheme(
           contentPadding: inputPadding,
           filled: true,
@@ -50,17 +47,17 @@ class CustomTheme {
 // Dark Mode
   ThemeData get darkTheme {
     return ThemeData(
-      // colorScheme: Colors.red,
-      primarySwatch:
-          createMaterialColor(const Color.fromARGB(255, 220, 220, 220)),
-      scaffoldBackgroundColor: const Color.fromARGB(255, 40, 80, 110),
+      colorScheme: const ColorScheme.dark(
+        primary: Color.fromARGB(255, 220, 220, 220),
+      ),
       brightness: Brightness.dark,
       textTheme: const TextTheme(
         headline4: TextStyle(color: Colors.white),
         subtitle2: TextStyle(
-          color: Color.fromARGB(255, 156, 217, 234),
+          color: Colors.grey,
         ),
       ),
+      dividerTheme: const DividerThemeData(color: Colors.transparent),
       inputDecorationTheme: InputDecorationTheme(
         contentPadding: inputPadding,
         filled: true,

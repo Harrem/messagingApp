@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:assignment/services/cloudStore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -60,10 +61,13 @@ class Auth {
         return Future.error(e.message.toString());
       }
     } on SocketException catch (e) {
+      debugPrint(e.message);
       return Future.error("Network Error");
     } catch (e) {
       return Future.error(e.toString());
     }
+
+    CloudStore().initUserProfile(user!);
 
     return user;
   }

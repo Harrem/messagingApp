@@ -1,5 +1,5 @@
 import 'package:assignment/screens/home.dart';
-import 'package:assignment/services/authentication.dart';
+import 'package:assignment/controller/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

@@ -1,7 +1,9 @@
 import 'package:assignment/screens/sign_in.dart';
-import 'package:assignment/services/authentication.dart';
+import 'package:assignment/controller/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'create_profile.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -74,7 +76,7 @@ class _SignUpState extends State<SignUp> {
                     var email = usernameText.text;
                     var password = passwordText.text;
 
-                    await auth
+                    User? user = await auth
                         .signUpWithEmailAndPassword(
                             email: email, password: password)
                         .onError(
@@ -97,6 +99,13 @@ class _SignUpState extends State<SignUp> {
                         ScaffoldMessenger.of(context).clearMaterialBanners();
                       },
                     );
+                    if (user != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  CreateProfile()));
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
