@@ -1,18 +1,16 @@
-import 'package:assignment/screens/home.dart';
+import 'package:assignment/screens/sign_in.dart';
 import 'package:assignment/services/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'sign_up.dart';
-
-class SignIn extends StatefulWidget {
-  const SignIn({Key? key}) : super(key: key);
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   final Auth auth = Auth();
   TextEditingController usernameText = TextEditingController();
@@ -52,11 +50,11 @@ class _SignInState extends State<SignIn> {
                 ),
                 const SizedBox(height: 100),
                 Text(
-                  "Welcome Back",
+                  "Create Your Account",
                   style: Theme.of(context).textTheme.headline4,
                 ),
                 Text(
-                  "Sign in to continue",
+                  "Sign up to continue",
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 const SizedBox(height: 60),
@@ -77,19 +75,16 @@ class _SignInState extends State<SignIn> {
                     var password = passwordText.text;
 
                     await auth
-                        .signInWithEmailAndPassword(
+                        .signUpWithEmailAndPassword(
                             email: email, password: password)
                         .onError(
                       (error, stackTrace) async {
-                        bool isShown = true;
                         ScaffoldMessenger.of(context).showMaterialBanner(
                           MaterialBanner(
                             content: Text("$error"),
                             actions: [
-                              //remove banner when pressed
                               TextButton(
                                 onPressed: () async {
-                                  isShown = false;
                                   ScaffoldMessenger.of(context)
                                       .clearMaterialBanners();
                                 },
@@ -98,24 +93,10 @@ class _SignInState extends State<SignIn> {
                             ],
                           ),
                         );
-                        // remove banner after 3 seconds
-                        if (isShown) {
-                          await Future.delayed(const Duration(seconds: 3));
-                          // ignore: use_build_context_synchronously
-                          ScaffoldMessenger.of(context).clearMaterialBanners();
-                        }
-                        return null;
+                        await Future.delayed(const Duration(seconds: 3));
+                        ScaffoldMessenger.of(context).clearMaterialBanners();
                       },
                     );
-                    if (auth.checkUser()) {
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => Home(),
-                        ),
-                      );
-                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,21 +115,18 @@ class _SignInState extends State<SignIn> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
-                          onPressed: () {},
-                          child: const Text("Forgot Password?"),
-                        ),
-                        TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    const SignUp(),
+                                    const SignIn(),
                               ),
                             );
                           },
-                          child: const Text("Create Account"),
-                        )
+                          child: const Text("Sign In"),
+                        ),
+                        const Text(""),
                       ],
                     ),
                   ),

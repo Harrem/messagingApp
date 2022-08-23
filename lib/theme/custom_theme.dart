@@ -23,6 +23,7 @@ class CustomTheme {
             color: Color.fromARGB(255, 160, 175, 185),
           ),
         ),
+        dividerTheme: DividerThemeData(color: Colors.transparent),
         inputDecorationTheme: InputDecorationTheme(
           contentPadding: inputPadding,
           filled: true,
