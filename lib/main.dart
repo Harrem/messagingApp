@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Messenger',
-      theme: CustomTheme().lightTheme,
+      theme: CustomTheme().darkTheme,
       home: const CreateProfile(),
     );
   }
