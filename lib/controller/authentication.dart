@@ -4,24 +4,23 @@ import 'package:assignment/services/cloudStore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Auth {
+class Auth extends ChangeNotifier {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  /// checks if user is signed in  or not
+  /// checks if user is signed in  or not, returns true and false respectively
   bool checkUser() {
     if (firebaseAuth.currentUser != null) return true;
     return false;
   }
 
   ///Sign in to firebase auth
-  Future<User?> signInWithEmailAndPassword(
+  Future<void> signInWithEmailAndPassword(
       {required email, required password}) async {
-    User? user;
     try {
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
 
-      user = userCredential.user;
+      userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == "user-not-found") {
         return Future.error("User Not Found");
@@ -32,13 +31,13 @@ class Auth {
       } else {
         return Future.error(e.message.toString());
       }
-    } on SocketException catch (e) {
+    } on SocketException {
       return Future.error("Network Error");
     } catch (e) {
       return Future.error(e.toString());
     }
 
-    return user;
+    notifyListeners();
   }
 
   ///Sign up to firebase auth
@@ -76,5 +75,41 @@ class Auth {
   Future<void> signout() async {
     await firebaseAuth.signOut();
     debugPrint("Signed out successfully");
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await firebaseAuth
+          .sendPasswordResetEmail(email: email)
+          .then((value) => debugPrint("Email sent successfully!"));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "user-not-found") {
+        return Future.error("User doesn't exist!");
+      } else if (e.code == "invalid-email") {
+        return Future.error("Invalid email address");
+      } else {
+        return Future.error(e.message.toString());
+      }
+    } on SocketException catch (e) {
+      debugPrint(e.message);
+      return Future.error("Check your internet connection");
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
+  Future<void> confirmPasswordReset(String code, String newPassword) async {
+    try {
+      await firebaseAuth.confirmPasswordReset(
+          code: code, newPassword: newPassword);
+    } on FirebaseAuthException catch (e) {
+      return Future.error(e.message.toString());
+    } on SocketException catch (e) {
+      debugPrint(e.message);
+      return Future.error("Network Error");
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+    debugPrint("Password Reseted Successfully!");
   }
 }
