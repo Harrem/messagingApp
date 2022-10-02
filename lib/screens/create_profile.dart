@@ -1,9 +1,9 @@
-import 'package:assignment/screens/home.dart';
-import 'package:assignment/controller/authentication.dart';
-import 'package:assignment/screens/sign_up.dart';
-import 'package:assignment/services/cloudStore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:assignment/controller/user_profile_actions.dart';
+import 'package:assignment/models/user_data.dart';
+import 'package:assignment/route.dart';
 import 'package:flutter/material.dart';
+import '../controller/authentication.dart';
+import 'sign_up.dart';
 import 'package:intl/intl.dart';
 
 class CreateProfile extends StatefulWidget {
@@ -14,7 +14,7 @@ class CreateProfile extends StatefulWidget {
 }
 
 class _CreateProfileState extends State<CreateProfile> {
-  final GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final Auth auth = Auth();
   TextEditingController firstNameText = TextEditingController();
   TextEditingController lastNameText = TextEditingController();
@@ -44,91 +44,117 @@ class _CreateProfileState extends State<CreateProfile> {
             child: SizedBox(
               height: height,
               child: Container(
+                constraints: const BoxConstraints(maxWidth: 700),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                 width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: ClipOval(
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          color: Colors.grey,
+                child: Form(
+                  key: _formkey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: ClipOval(
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 100),
-                    Text(
-                      "Enter Your Name",
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    Text(
-                      "Fill in to continue",
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                    const SizedBox(height: 60),
-                    TextFormField(
-                      controller: firstNameText,
-                      decoration:
-                          const InputDecoration(labelText: "FIRST NAME"),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: lastNameText,
-                      decoration: const InputDecoration(labelText: "LAST NAME"),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var email = firstNameText.text;
-                        var password = lastNameText.text;
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    CreateProfileSecondPage()));
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text("PROCEED"),
-                          Icon(Icons.arrow_right_rounded),
-                        ],
+                      const SizedBox(height: 100),
+                      Text(
+                        "Enter Your Name",
+                        style: Theme.of(context).textTheme.headline4,
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.bottomCenter,
-                        // color: Colors.white,
+                      Text(
+                        "Fill in to continue",
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      const SizedBox(height: 60),
+                      TextFormField(
+                        controller: firstNameText,
+                        decoration:
+                            const InputDecoration(labelText: "FIRST NAME"),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter your First Name';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: lastNameText,
+                        decoration:
+                            const InputDecoration(labelText: "LAST NAME"),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter your First Name';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (_formkey.currentState!.validate()) {
+                            var fname = firstNameText.text;
+                            var lname = lastNameText.text;
+                            UserData userData = UserData(
+                              firstName: fname,
+                              lastName: lname,
+                            );
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    CreateProfileSecondPage(userData),
+                              ),
+                            );
+                          }
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                              onPressed: () {},
-                              child: const Text("Help"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        const SignUp(),
-                                  ),
-                                );
-                              },
-                              child: const Text("Sign In"),
-                            )
+                          children: const [
+                            Text("PROCEED"),
+                            Icon(Icons.arrow_right_rounded),
                           ],
                         ),
                       ),
-                    )
-                  ],
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.bottomCenter,
+                          // color: Colors.white,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text("Help"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          const SignUp(),
+                                    ),
+                                  );
+                                },
+                                child: const Text("Sign In"),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -140,18 +166,19 @@ class _CreateProfileState extends State<CreateProfile> {
 }
 
 class CreateProfileSecondPage extends StatelessWidget {
+  final UserData userData;
+  CreateProfileSecondPage(this.userData, {super.key});
   //form key
-  final GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   final Auth auth = Auth();
-  TextEditingController birthdateController = TextEditingController();
-  TextEditingController lastNameText = TextEditingController();
-  bool? lightTheme;
+  final TextEditingController birthdateController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    lightTheme = Theme.of(context).brightness == Brightness.dark;
+    bool lightTheme = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: lightTheme!
+      decoration: lightTheme
           ? const BoxDecoration(
               gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -163,121 +190,138 @@ class CreateProfileSecondPage extends StatelessWidget {
             ))
           : const BoxDecoration(),
       child: Scaffold(
-        backgroundColor: !lightTheme! ? Colors.white : Colors.transparent,
+        backgroundColor: !lightTheme ? Colors.white : Colors.transparent,
         body: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 700),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipOval(
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 100),
-                Text(
-                  "Birthdate and Gender",
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-                Text(
-                  "Fill in to continue",
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-                const SizedBox(height: 60),
-                GestureDetector(
-                  onTap: () async {
-                    //TODO: use Cupertino Date Picker
-                    DateTime? date = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        initialEntryMode: DatePickerEntryMode.input,
-                        firstDate: DateTime(1999),
-                        lastDate: DateTime.now());
-                    if (date != null) {
-                      birthdateController.text =
-                          DateFormat.yMMMd('en_US').format(date);
-                    }
-                  },
-                  child: TextFormField(
-                    enabled: false,
-                    controller: birthdateController,
-                    decoration: const InputDecoration(
-                      labelText: "FIRST NAME",
-                      suffixIcon: Icon(Icons.calendar_month_rounded),
+            child: Form(
+              key: _formkey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipOval(
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      color: Colors.grey,
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      value: "male",
-                      decoration: const InputDecoration(
-                        isCollapsed: true,
-                        labelText: "GENDER",
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: "male", child: Text("Male")),
-                        DropdownMenuItem(
-                            value: "female", child: Text("FEMALE")),
-                        DropdownMenuItem(value: "other", child: Text("OTHER")),
-                      ],
-                      onChanged: (value) {}),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    var firstName = birthdateController.text;
-                    var lastName = lastNameText.text;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                CreateProfileSecondPage()));
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text("CONTINUE"),
-                      Icon(Icons.arrow_right_rounded),
-                    ],
+                  const SizedBox(height: 100),
+                  Text(
+                    "Birthdate and Gender",
+                    style: Theme.of(context).textTheme.headline4,
                   ),
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    // color: Colors.white,
+                  Text(
+                    "Fill in to continue",
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                  const SizedBox(height: 60),
+                  GestureDetector(
+                    onTap: () async {
+                      //TODO: use Cupertino Date Picker
+                      DateTime? date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          initialEntryMode: DatePickerEntryMode.input,
+                          firstDate: DateTime(1999),
+                          lastDate: DateTime.now());
+                      if (date != null) {
+                        birthdateController.text =
+                            DateFormat.yMMMd('en_US').format(date);
+                      }
+                    },
+                    child: TextFormField(
+                      enabled: false,
+                      controller: birthdateController,
+                      decoration: const InputDecoration(
+                        labelText: "BIRTH DATE",
+                        suffixIcon: Icon(Icons.calendar_month_rounded),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter your birthdate';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ButtonTheme(
+                    alignedDropdown: true,
+                    child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        hint: const Text("Select Gender"),
+                        decoration: const InputDecoration(
+                          isCollapsed: true,
+                          labelText: "GENDER",
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Choose your gender';
+                          }
+                          return null;
+                        },
+                        items: const [
+                          DropdownMenuItem(value: "male", child: Text("Male")),
+                          DropdownMenuItem(
+                              value: "female", child: Text("FEMALE")),
+                          DropdownMenuItem(
+                              value: "other", child: Text("OTHER")),
+                        ],
+                        onChanged: (value) {
+                          genderController.text = value!;
+                        }),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formkey.currentState!.validate()) {
+                        var birthDate = birthdateController.text;
+                        var gender = genderController.text;
+
+                        UserActions()
+                            .createProfile(
+                              firstName: userData.firstName,
+                              lastName: userData.lastName,
+                              birthDate: birthDate,
+                              gender: gender,
+                            )
+                            .then((value) => Navigator.pushNamed(
+                                context, RouteGenerator.home));
+                      }
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text("Help"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const SignUp(),
-                              ),
-                            );
-                          },
-                          child: const Text("Sign In"),
-                        )
+                      children: const [
+                        Text("CONTINUE"),
+                        Icon(Icons.arrow_right_rounded),
                       ],
                     ),
                   ),
-                )
-              ],
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      // color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text("Help"),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text(""),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
