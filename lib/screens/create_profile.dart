@@ -2,6 +2,7 @@ import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/models/user_data.dart';
 import 'package:assignment/route.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../controller/authentication.dart';
 import 'sign_up.dart';
 import 'package:intl/intl.dart';
@@ -176,6 +177,7 @@ class CreateProfileSecondPage extends StatelessWidget {
   final TextEditingController genderController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserActions>(context);
     bool lightTheme = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: lightTheme
@@ -281,7 +283,7 @@ class CreateProfileSecondPage extends StatelessWidget {
                         var birthDate = birthdateController.text;
                         var gender = genderController.text;
 
-                        UserActions()
+                        userProvider
                             .createProfile(
                               firstName: userData.firstName,
                               lastName: userData.lastName,
