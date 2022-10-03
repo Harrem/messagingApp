@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'controller/authentication.dart';
+import 'controller/user_profile_actions.dart';
 import 'route.dart';
 import 'theme/custom_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,8 +50,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Auth(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Auth>(create: ((context) => Auth())),
+        ChangeNotifierProvider<UserActions>(create: (context) => UserActions()),
+      ],
       child: MaterialApp(
         initialRoute: FirebaseAuth.instance.currentUser != null
             ? RouteGenerator.home
