@@ -14,6 +14,14 @@ class UserActions extends ChangeNotifier {
     userDoc = FirebaseFirestore.instance.collection("users").doc(uid);
   }
 
+  Future<void> getUserData() async {
+    final data = await userDoc
+        .get()
+        .then((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>);
+    userData = UserData.fromMap(data);
+    debugPrint("Fetched User Data");
+  }
+
   Future<void> createProfile({
     required String firstName,
     required String lastName,
@@ -36,6 +44,22 @@ class UserActions extends ChangeNotifier {
     userProfileRef.putFile(profilePic);
     userData.profilePictureUrl = await userProfileRef.getDownloadURL();
     await syncUserData();
+  }
+
+  Future<List<Map<String, dynamic>>> search(String text) async {
+    final users = await FirebaseFirestore.instance.collection('users').get();
+    final matchedUsers = users.docs.map((e) {
+      final name = e.data()['firstName'];
+      if (text.isEmpty) {
+        return e.data();
+      } else if (name.toString().trim().toLowerCase() ==
+          text.trim().toLowerCase()) {
+        debugPrint("user found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        return e.data();
+      }
+      return e.data();
+    }).toList();
+    return matchedUsers;
   }
 
   Future<void> syncUserData() async {

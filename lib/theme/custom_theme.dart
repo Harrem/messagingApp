@@ -49,6 +49,7 @@ class CustomTheme {
     return ThemeData(
       colorScheme: const ColorScheme.dark(
         primary: Color.fromARGB(255, 220, 220, 220),
+        background: Colors.black,
       ),
       brightness: Brightness.dark,
       textTheme: const TextTheme(

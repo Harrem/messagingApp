@@ -5,6 +5,7 @@ import 'screens/reset_password.dart';
 import 'screens/settings.dart';
 import 'screens/sign_in.dart';
 import 'screens/sign_up.dart';
+import 'screens/search.dart';
 import 'screens/home.dart';
 
 class RouteGenerator {
@@ -15,6 +16,7 @@ class RouteGenerator {
   static const String settingPage = "./screens/settings.dart";
   static const String forgotPassword = "./screens/forgot_password.dart";
   static const String resetPassword = "./screens/reset_password.dart";
+  static const String searchPage = "./screens/search.dart";
 
   RouteGenerator._();
 
@@ -34,6 +36,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ForgotPassword());
       case resetPassword:
         return MaterialPageRoute(builder: (_) => const ResetPassword());
+      case searchPage:
+        return MaterialPageRoute(builder: (_) => Search());
       default:
         return MaterialPageRoute(builder: (_) => const Home());
     }

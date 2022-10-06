@@ -1,6 +1,8 @@
+import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/route.dart';
 import 'package:assignment/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -12,6 +14,8 @@ class _HomeState extends State<Home> {
   int index = 0;
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserActions>(context);
+    userProvider.getUserData();
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -94,7 +98,9 @@ class _HomeState extends State<Home> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, RouteGenerator.searchPage);
+            },
             child: const Icon(Icons.search),
           ),
         ),

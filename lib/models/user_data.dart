@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class UserData {
   String firstName;
   String lastName;
@@ -9,6 +11,7 @@ class UserData {
   String? gender;
   String? profilePictureUrl;
   bool? isActive;
+  List<String>? conversations;
   UserData({
     required this.firstName,
     required this.lastName,
@@ -17,6 +20,7 @@ class UserData {
     this.gender,
     this.profilePictureUrl,
     this.isActive,
+    this.conversations,
   });
 
   UserData copyWith({
@@ -27,6 +31,7 @@ class UserData {
     String? gender,
     String? profilePictureUrl,
     bool? isActive,
+    List<String>? conversations,
   }) {
     return UserData(
       firstName: firstName ?? this.firstName,
@@ -36,6 +41,7 @@ class UserData {
       gender: gender ?? this.gender,
       profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
       isActive: isActive ?? this.isActive,
+      conversations: conversations ?? this.conversations,
     );
   }
 
@@ -48,6 +54,7 @@ class UserData {
       'gender': gender,
       'profilePictureUrl': profilePictureUrl,
       'isActive': isActive,
+      'conversations': conversations,
     };
   }
 
@@ -63,6 +70,9 @@ class UserData {
           ? map['profilePictureUrl'] as String
           : null,
       isActive: map['isActive'] != null ? map['isActive'] as bool : null,
+      conversations: map['conversations'] != null
+          ? List<String>.from(map['conversations'] as List<String>)
+          : null,
     );
   }
 
@@ -73,7 +83,7 @@ class UserData {
 
   @override
   String toString() {
-    return 'UserData(firstName: $firstName, lastName: $lastName, birthDate: $birthDate, joinedDate: $joinedDate, gender: $gender, profilePictureUrl: $profilePictureUrl, isActive: $isActive)';
+    return 'UserData(firstName: $firstName, lastName: $lastName, birthDate: $birthDate, joinedDate: $joinedDate, gender: $gender, profilePictureUrl: $profilePictureUrl, isActive: $isActive, conversations: $conversations)';
   }
 
   @override
@@ -86,7 +96,8 @@ class UserData {
         other.joinedDate == joinedDate &&
         other.gender == gender &&
         other.profilePictureUrl == profilePictureUrl &&
-        other.isActive == isActive;
+        other.isActive == isActive &&
+        listEquals(other.conversations, conversations);
   }
 
   @override
@@ -97,6 +108,7 @@ class UserData {
         joinedDate.hashCode ^
         gender.hashCode ^
         profilePictureUrl.hashCode ^
-        isActive.hashCode;
+        isActive.hashCode ^
+        conversations.hashCode;
   }
 }
