@@ -1,13 +1,14 @@
 import 'dart:async';
-import 'controller/authentication.dart';
-import 'controller/user_profile_actions.dart';
 import 'route.dart';
-import 'theme/custom_theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'controller/conversation_actions.dart';
+import 'controller/theme_controller.dart';
+import 'controller/authentication.dart';
+import 'controller/user_profile_actions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,18 +53,24 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<Auth>(create: ((context) => Auth())),
+        ChangeNotifierProvider(create: (context) => ThemeController()),
+        ChangeNotifierProvider<ConversationActions>(
+            create: (context) => ConversationActions()),
+        ChangeNotifierProvider<Auth>(create: (context) => Auth()),
         ChangeNotifierProvider<UserActions>(create: (context) => UserActions()),
       ],
-      child: MaterialApp(
-        initialRoute: FirebaseAuth.instance.currentUser != null
-            ? RouteGenerator.home
-            : RouteGenerator.signIn,
-        onGenerateRoute: (settings) => RouteGenerator.generateRoute(settings),
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        title: 'Messenger',
-        theme: CustomTheme().darkTheme,
+      child: Consumer<ThemeController>(
+        builder: (((context, value, child) => MaterialApp(
+              initialRoute: FirebaseAuth.instance.currentUser != null
+                  ? RouteGenerator.home
+                  : RouteGenerator.signIn,
+              onGenerateRoute: (settings) =>
+                  RouteGenerator.generateRoute(settings),
+              navigatorKey: navigatorKey,
+              debugShowCheckedModeBanner: false,
+              title: 'Messenger',
+              theme: value.themeMode,
+            ))),
       ),
     );
   }
