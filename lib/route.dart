@@ -1,3 +1,4 @@
+import 'package:assignment/screens/messaging.dart';
 import 'package:flutter/material.dart';
 import 'screens/create_profile.dart';
 import 'screens/forgot_password.dart';
@@ -17,6 +18,7 @@ class RouteGenerator {
   static const String forgotPassword = "./screens/forgot_password.dart";
   static const String resetPassword = "./screens/reset_password.dart";
   static const String searchPage = "./screens/search.dart";
+  static const String messagePage = "./screens/message.dart";
 
   RouteGenerator._();
 
@@ -38,6 +40,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ResetPassword());
       case searchPage:
         return MaterialPageRoute(builder: (_) => Search());
+      case messagePage:
+        return MaterialPageRoute(builder: (_) => const MessageScreen());
       default:
         return MaterialPageRoute(builder: (_) => const Home());
     }

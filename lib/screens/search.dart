@@ -1,4 +1,5 @@
 import 'package:assignment/controller/user_profile_actions.dart';
+import 'package:assignment/route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,20 +40,32 @@ class _SearchState extends State<Search> {
                 FutureBuilder<List<Map<String, dynamic>?>>(
                   future: userActions.search(text),
                   builder: ((context, snapshot) {
-                    debugPrint(snapshot.data!.length.toString());
-                    return snapshot.data == null
-                        ? const CircularProgressIndicator()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title: Text(
-                                    snapshot.data![index]!['firstName'] ??
-                                        'null'),
-                              );
-                            },
+                    // debugPrint(snapshot.data!.length.toString());
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("Error"),
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var fname = snapshot.data![index]!['firstName'];
+                          var lname = snapshot.data![index]!['lastName'];
+                          return InkWell(
+                            onTap: () => Navigator.pushNamed(
+                                context, RouteGenerator.messagePage),
+                            child: ListTile(
+                              title: Text("$fname $lname"),
+                            ),
                           );
+                        },
+                      );
+                    }
+                    return const Center(
+                      child: Text("Error while searching"),
+                    );
                   }),
                 ),
               ],

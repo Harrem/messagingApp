@@ -1,3 +1,5 @@
+import 'package:assignment/controller/conversation_actions.dart';
+import 'package:assignment/controller/theme_controller.dart';
 import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/route.dart';
 import 'package:assignment/widgets/custom_widgets.dart';
@@ -14,62 +16,71 @@ class _HomeState extends State<Home> {
   int index = 0;
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserActions>(context);
-    userProvider.getUserData();
+    final userActions = Provider.of<UserActions>(context);
+    final conversationActions = Provider.of<ConversationActions>(context);
+    userActions.getUserData();
+
     return WillPopScope(
       onWillPop: () async {
         return false;
       },
       child: SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Chats",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            leading: Container(
+              padding: const EdgeInsets.all(5),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, RouteGenerator.settingPage);
+                },
+                child: const OvalPicture(size: 50),
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: IconButton(
+                    onPressed: () {
+                      Provider.of<ThemeController>(context, listen: false)
+                          .turnThemeMode();
+                    },
+                    icon: const Icon(Icons.light_mode)),
+              )
+            ],
+          ),
           body: Column(
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, RouteGenerator.settingPage);
-                        },
-                        child: const OvalPicture(size: 40)),
-                    const VerticalDivider(),
-                    Text(
-                      "Chats",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                  ],
-                ),
-              ),
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 20,
-                  itemBuilder: ((context, index) {
-                    return Column(
-                      children: [
-                        ListTile(
-                          leading: const OvalPicture(),
-                          trailing: const Icon(Icons.delivery_dining_outlined),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const TitleText("Profile Name"),
-                              Text(
-                                "Last Message",
-                                style: Theme.of(context).textTheme.subtitle2,
-                              ),
+                child: FutureBuilder(builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemBuilder: ((context, index) {
+                          return Column(
+                            children: const [
+                              ConvTile(),
+                              SizedBox(height: 15),
                             ],
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                      ],
-                    );
-                  }),
-                ),
+                          );
+                        }),
+                      );
+                    } else {
+                      return const Center(
+                        child: Text("Data is null"),
+                      );
+                    }
+                  }
+                  return const Center(
+                    child: Text("Connnection Error"),
+                  );
+                }),
               )
             ],
           ),

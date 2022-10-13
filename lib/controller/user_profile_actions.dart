@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:assignment/models/conversations.dart';
 import 'package:assignment/models/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,12 +15,13 @@ class UserActions extends ChangeNotifier {
     userDoc = FirebaseFirestore.instance.collection("users").doc(uid);
   }
 
-  Future<void> getUserData() async {
+  Future<UserData> getUserData() async {
     final data = await userDoc
         .get()
         .then((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>);
     userData = UserData.fromMap(data);
     debugPrint("Fetched User Data");
+    return userData;
   }
 
   Future<void> createProfile({
@@ -28,11 +30,14 @@ class UserActions extends ChangeNotifier {
     String? birthDate,
     String? gender,
   }) async {
+    userData.uid = uid;
+    userData.email = FirebaseAuth.instance.currentUser!.email;
     userData.firstName = firstName;
     userData.lastName = lastName;
     userData.birthDate = birthDate;
     userData.gender = gender;
     userData.joinedDate = DateTime.now().toIso8601String();
+    userData.conversations = [];
     await syncUserData();
   }
 
@@ -46,20 +51,33 @@ class UserActions extends ChangeNotifier {
     await syncUserData();
   }
 
-  Future<List<Map<String, dynamic>>> search(String text) async {
+  Future<List<Map<String, dynamic>?>> search(String text) async {
     final users = await FirebaseFirestore.instance.collection('users').get();
-    final matchedUsers = users.docs.map((e) {
-      final name = e.data()['firstName'];
-      if (text.isEmpty) {
-        return e.data();
-      } else if (name.toString().trim().toLowerCase() ==
-          text.trim().toLowerCase()) {
-        debugPrint("user found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        return e.data();
+    final docs = users.docs;
+    List<Map<String, dynamic>> list = [];
+    for (var e in docs) {
+      String str =
+          "${e.data()['firstName'].toString().toLowerCase()} ${e.data()['lastName'].toString().toLowerCase()}";
+      if (str.contains(text.toLowerCase())) {
+        debugPrint(str);
+        list.add(e.data());
       }
-      return e.data();
-    }).toList();
-    return matchedUsers;
+    }
+    debugPrint(list.length.toString());
+    // final matchedUsers = users.docs.map((e) {
+    //   final name = e.data()['firstName'];
+    //   if (text.isEmpty) {
+    //     return e.data();
+    //   } else if (name.toString().trim().toLowerCase() ==
+    //       text.trim().toLowerCase()) {
+    //     return e.data();
+    //   }
+    //   return e.data();
+    // }).toList();
+    if (list.isEmpty) {
+      return [];
+    }
+    return list;
   }
 
   Future<void> syncUserData() async {

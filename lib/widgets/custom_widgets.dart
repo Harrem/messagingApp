@@ -29,3 +29,29 @@ class TitleText extends StatelessWidget {
     );
   }
 }
+
+class ConvTile extends StatelessWidget {
+  const ConvTile({Key? key, this.profileImage, this.title, this.lastMessage})
+      : super(key: key);
+  final String? title;
+  final Image? profileImage;
+  final String? lastMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const OvalPicture(),
+      trailing: const Icon(Icons.delivery_dining_outlined),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TitleText(title ?? 'User'),
+          Text(
+            lastMessage ?? "Last Message",
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
+        ],
+      ),
+    );
+  }
+}

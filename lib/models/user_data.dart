@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 class UserData {
-  String firstName;
-  String lastName;
+  String? uid;
+  String? email;
+  String? firstName;
+  String? lastName;
   String? birthDate;
   String? joinedDate;
   String? gender;
@@ -13,8 +15,10 @@ class UserData {
   bool? isActive;
   List<String>? conversations;
   UserData({
-    required this.firstName,
-    required this.lastName,
+    this.uid,
+    this.email,
+    this.firstName,
+    this.lastName,
     this.birthDate,
     this.joinedDate,
     this.gender,
@@ -24,6 +28,8 @@ class UserData {
   });
 
   UserData copyWith({
+    String? uid,
+    String? email,
     String? firstName,
     String? lastName,
     String? birthDate,
@@ -34,6 +40,8 @@ class UserData {
     List<String>? conversations,
   }) {
     return UserData(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       birthDate: birthDate ?? this.birthDate,
@@ -47,6 +55,8 @@ class UserData {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'uid': uid,
+      'email': email,
       'firstName': firstName,
       'lastName': lastName,
       'birthDate': birthDate,
@@ -60,8 +70,10 @@ class UserData {
 
   factory UserData.fromMap(Map<String, dynamic> map) {
     return UserData(
-      firstName: map['firstName'] as String,
-      lastName: map['lastName'] as String,
+      uid: map['uid'] != null ? map['uid'] as String : null,
+      email: map['email'] != null ? map['email'] as String : null,
+      firstName: map['firstName'] != null ? map['firstName'] as String : null,
+      lastName: map['lastName'] != null ? map['lastName'] as String : null,
       birthDate: map['birthDate'] != null ? map['birthDate'] as String : null,
       joinedDate:
           map['joinedDate'] != null ? map['joinedDate'] as String : null,
@@ -83,14 +95,16 @@ class UserData {
 
   @override
   String toString() {
-    return 'UserData(firstName: $firstName, lastName: $lastName, birthDate: $birthDate, joinedDate: $joinedDate, gender: $gender, profilePictureUrl: $profilePictureUrl, isActive: $isActive, conversations: $conversations)';
+    return 'UserData(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, birthDate: $birthDate, joinedDate: $joinedDate, gender: $gender, profilePictureUrl: $profilePictureUrl, isActive: $isActive, conversations: $conversations)';
   }
 
   @override
   bool operator ==(covariant UserData other) {
     if (identical(this, other)) return true;
 
-    return other.firstName == firstName &&
+    return other.uid == uid &&
+        other.email == email &&
+        other.firstName == firstName &&
         other.lastName == lastName &&
         other.birthDate == birthDate &&
         other.joinedDate == joinedDate &&
@@ -102,7 +116,9 @@ class UserData {
 
   @override
   int get hashCode {
-    return firstName.hashCode ^
+    return uid.hashCode ^
+        email.hashCode ^
+        firstName.hashCode ^
         lastName.hashCode ^
         birthDate.hashCode ^
         joinedDate.hashCode ^

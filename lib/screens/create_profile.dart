@@ -139,16 +139,8 @@ class _CreateProfileState extends State<CreateProfile> {
                                 child: const Text("Help"),
                               ),
                               TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          const SignUp(),
-                                    ),
-                                  );
-                                },
-                                child: const Text("Sign In"),
+                                onPressed: () {},
+                                child: const Text(""),
                               )
                             ],
                           ),
@@ -285,8 +277,8 @@ class CreateProfileSecondPage extends StatelessWidget {
 
                         userProvider
                             .createProfile(
-                              firstName: userData.firstName,
-                              lastName: userData.lastName,
+                              firstName: userData.firstName ?? 'null',
+                              lastName: userData.lastName ?? 'null',
                               birthDate: birthDate,
                               gender: gender,
                             )
