@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:assignment/controller/bottom_nav_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'route.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +37,19 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    _sub = FirebaseAuth.instance.authStateChanges().listen((user) {
+    _sub = FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
-        navigatorKey.currentState!.pushReplacementNamed(RouteGenerator.home);
+        var userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get();
+        if (userData.exists) {
+          debugPrint("data exist");
+          navigatorKey.currentState!.pushReplacementNamed(RouteGenerator.home);
+        } else {
+          navigatorKey.currentState!
+              .pushReplacementNamed(RouteGenerator.createProfile);
+        }
       } else {
         navigatorKey.currentState!.pushReplacementNamed(RouteGenerator.signIn);
       }
@@ -53,6 +66,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<BottomNavController>(
+            create: (context) => BottomNavController()),
         ChangeNotifierProvider(create: (context) => ThemeController()),
         ChangeNotifierProvider<ConversationActions>(
             create: (context) => ConversationActions()),
@@ -60,17 +75,21 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<UserActions>(create: (context) => UserActions()),
       ],
       child: Consumer<ThemeController>(
-        builder: (((context, value, child) => MaterialApp(
-              initialRoute: FirebaseAuth.instance.currentUser != null
-                  ? RouteGenerator.home
-                  : RouteGenerator.signIn,
-              onGenerateRoute: (settings) =>
-                  RouteGenerator.generateRoute(settings),
-              navigatorKey: navigatorKey,
-              debugShowCheckedModeBanner: false,
-              title: 'Messenger',
-              theme: value.themeMode,
-            ))),
+        builder: (((context, value, child) {
+          var sysBrightness = MediaQuery.of(context).platformBrightness;
+          value.setSysThemeMode(sysBrightness == Brightness.dark);
+          return MaterialApp(
+            initialRoute: FirebaseAuth.instance.currentUser != null
+                ? RouteGenerator.loadingPage
+                : RouteGenerator.signIn,
+            onGenerateRoute: (settings) =>
+                RouteGenerator.generateRoute(settings),
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: false,
+            title: 'Messenger',
+            theme: value.themeMode,
+          );
+        })),
       ),
     );
   }

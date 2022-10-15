@@ -12,4 +12,11 @@ class ThemeController extends ChangeNotifier {
         : themeMode = CustomTheme().darkTheme;
     notifyListeners();
   }
+
+  void setSysThemeMode(bool isDark) {
+    _lightMode = !isDark;
+    _lightMode
+        ? themeMode = CustomTheme().lightTheme
+        : themeMode = CustomTheme().darkTheme;
+  }
 }
