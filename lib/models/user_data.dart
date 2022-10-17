@@ -3,28 +3,30 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:assignment/models/conversations.dart';
+
 class UserData {
-  String? uid;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? birthDate;
-  String? joinedDate;
-  String? gender;
-  String? profilePictureUrl;
-  bool? isActive;
-  List<String>? conversations;
+  String uid;
+  String email;
+  String firstName;
+  String lastName;
+  String birthDate;
+  DateTime joinedDate;
+  String gender;
+  String profilePictureUrl;
+  bool isActive;
+  List<Conversation> conversations;
   UserData({
-    this.uid,
-    this.email,
-    this.firstName,
-    this.lastName,
-    this.birthDate,
-    this.joinedDate,
-    this.gender,
-    this.profilePictureUrl,
-    this.isActive,
-    this.conversations,
+    required this.uid,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.birthDate,
+    required this.joinedDate,
+    required this.gender,
+    required this.profilePictureUrl,
+    required this.isActive,
+    required this.conversations,
   });
 
   UserData copyWith({
@@ -33,11 +35,11 @@ class UserData {
     String? firstName,
     String? lastName,
     String? birthDate,
-    String? joinedDate,
+    DateTime? joinedDate,
     String? gender,
     String? profilePictureUrl,
     bool? isActive,
-    List<String>? conversations,
+    List<Conversation>? conversations,
   }) {
     return UserData(
       uid: uid ?? this.uid,
@@ -60,31 +62,30 @@ class UserData {
       'firstName': firstName,
       'lastName': lastName,
       'birthDate': birthDate,
-      'joinedDate': joinedDate,
+      'joinedDate': joinedDate.millisecondsSinceEpoch,
       'gender': gender,
       'profilePictureUrl': profilePictureUrl,
       'isActive': isActive,
-      'conversations': conversations,
+      'conversations': conversations.map((x) => x.toMap()).toList(),
     };
   }
 
   factory UserData.fromMap(Map<String, dynamic> map) {
     return UserData(
-      uid: map['uid'] != null ? map['uid'] as String : null,
-      email: map['email'] != null ? map['email'] as String : null,
-      firstName: map['firstName'] != null ? map['firstName'] as String : null,
-      lastName: map['lastName'] != null ? map['lastName'] as String : null,
-      birthDate: map['birthDate'] != null ? map['birthDate'] as String : null,
-      joinedDate:
-          map['joinedDate'] != null ? map['joinedDate'] as String : null,
-      gender: map['gender'] != null ? map['gender'] as String : null,
-      profilePictureUrl: map['profilePictureUrl'] != null
-          ? map['profilePictureUrl'] as String
-          : null,
-      isActive: map['isActive'] != null ? map['isActive'] as bool : null,
-      conversations: map['conversations'] != null
-          ? List<String>.from(map['conversations'] as List<String>)
-          : null,
+      uid: map['uid'] as String,
+      email: map['email'] as String,
+      firstName: map['firstName'] as String,
+      lastName: map['lastName'] as String,
+      birthDate: map['birthDate'] as String,
+      joinedDate: DateTime.fromMillisecondsSinceEpoch(map['joinedDate'] as int),
+      gender: map['gender'] as String,
+      profilePictureUrl: map['profilePictureUrl'] as String,
+      isActive: map['isActive'] as bool,
+      conversations: List<Conversation>.from(
+        (map['conversations'] as List<dynamic>).map<Conversation>(
+          (x) => Conversation.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
