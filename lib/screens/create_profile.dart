@@ -1,10 +1,10 @@
 import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/models/user_data.dart';
 import 'package:assignment/route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controller/authentication.dart';
-import 'sign_up.dart';
 import 'package:intl/intl.dart';
 
 class CreateProfile extends StatefulWidget {
@@ -104,16 +104,11 @@ class _CreateProfileState extends State<CreateProfile> {
                           if (_formkey.currentState!.validate()) {
                             var fname = firstNameText.text;
                             var lname = lastNameText.text;
-                            UserData userData = UserData(
-                              firstName: fname,
-                              lastName: lname,
-                            );
-
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    CreateProfileSecondPage(userData),
+                                    CreateProfileSecondPage(fname, lname),
                               ),
                             );
                           }
@@ -159,8 +154,9 @@ class _CreateProfileState extends State<CreateProfile> {
 }
 
 class CreateProfileSecondPage extends StatelessWidget {
-  final UserData userData;
-  CreateProfileSecondPage(this.userData, {super.key});
+  final String fname;
+  final String lname;
+  CreateProfileSecondPage(this.fname, this.lname, {super.key});
   //form key
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
@@ -274,16 +270,24 @@ class CreateProfileSecondPage extends StatelessWidget {
                       if (_formkey.currentState!.validate()) {
                         var birthDate = birthdateController.text;
                         var gender = genderController.text;
-
-                        userProvider
-                            .createProfile(
-                              firstName: userData.firstName ?? 'null',
-                              lastName: userData.lastName ?? 'null',
-                              birthDate: birthDate,
-                              gender: gender,
-                            )
-                            .then((value) => Navigator.pushNamed(
-                                context, RouteGenerator.home));
+                        var uid = FirebaseAuth.instance.currentUser!.uid;
+                        var email = FirebaseAuth.instance.currentUser!.email!;
+                        final data = UserData(
+                          uid: uid,
+                          firstName: fname,
+                          lastName: lname,
+                          gender: gender,
+                          birthDate: birthDate,
+                          email: email,
+                          joinedDate: DateTime.now(),
+                          profilePictureUrl: "",
+                          isActive: true,
+                          conversations: [],
+                        );
+                        userProvider.createProfile(data).then(
+                              (value) => Navigator.pushNamed(
+                                  context, RouteGenerator.home),
+                            );
                       }
                     },
                     child: Row(
