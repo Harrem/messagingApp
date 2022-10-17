@@ -7,15 +7,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
 class UserActions extends ChangeNotifier {
-  String uid = FirebaseAuth.instance.currentUser!.uid;
   late DocumentReference userDoc;
-  UserData userData = UserData(firstName: '', lastName: '');
-
-  UserActions() {
-    userDoc = FirebaseFirestore.instance.collection("users").doc(uid);
-  }
+  late UserData userData;
+  var uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<UserData> getUserData() async {
+    userDoc = FirebaseFirestore.instance.collection("users").doc(uid);
     final data = await userDoc
         .get()
         .then((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>);
@@ -24,30 +21,33 @@ class UserActions extends ChangeNotifier {
     return userData;
   }
 
-  Future<void> createProfile({
-    required String firstName,
-    required String lastName,
-    String? birthDate,
-    String? gender,
-  }) async {
-    userData.uid = uid;
-    userData.email = FirebaseAuth.instance.currentUser!.email;
-    userData.firstName = firstName;
-    userData.lastName = lastName;
-    userData.birthDate = birthDate;
-    userData.gender = gender;
-    userData.joinedDate = DateTime.now().toIso8601String();
-    userData.conversations = [];
+  Future<void> createProfile(UserData data) async {
+    userData = data;
     await syncUserData();
   }
 
 //TODO: imlement profile uploading to firebase storage
   Future<void> updateProfilePicture(File profilePic) async {
     FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+
+    debugPrint("Createing Storage Reference! ");
     final storageRef = firebaseStorage.ref();
-    final userProfileRef = storageRef.child('$uid/proPic.jpg');
-    userProfileRef.putFile(profilePic);
-    userData.profilePictureUrl = await userProfileRef.getDownloadURL();
+
+    debugPrint("storageRef created! ");
+    final userProfileRef = storageRef.child('${userData.uid}/proPic.jpg');
+
+    debugPrint("uploading file");
+    var task = await userProfileRef.putFile(profilePic);
+
+    if (task.state == TaskState.success) {
+      await userProfileRef.getDownloadURL().then((value) {
+        userData.profilePictureUrl = value;
+        notifyListeners();
+        debugPrint("file uploaded");
+      });
+    } else if (task.state == TaskState.error) {
+      return Future.error(task.state.name);
+    }
     await syncUserData();
   }
 
@@ -80,12 +80,34 @@ class UserActions extends ChangeNotifier {
     return list;
   }
 
+  Future<void> createConversation(String withuserid) async {
+    final firestore = FirebaseFirestore.instance;
+    final docRef =
+        await firestore.collection("conversations").add({'toUid': withuserid});
+    DocumentReference ref = docRef;
+    Conversation conv = Conversation(
+      docRef: ref.path,
+      conversationId: ref.id,
+      createdDate: DateTime.now(),
+      messages: [],
+    );
+    debugPrint(ref.path);
+    if (userData.conversations == null) {
+      userData.conversations = [conv];
+    } else {
+      userData.conversations.add(conv);
+    }
+    syncUserData();
+  }
+
+  Future<List<Conversation>?> getConversations() async {
+    return userData.conversations;
+  }
+
   Future<void> syncUserData() async {
     final firestore = FirebaseFirestore.instance;
-    firestore
-        .collection('users')
-        .doc(uid)
-        .set(userData.toMap())
-        .then((value) => debugPrint("User Data synced"));
+    firestore.collection('users').doc(userData.uid).set(userData.toMap()).then(
+          (value) => debugPrint("User Data synced"),
+        );
   }
 }
