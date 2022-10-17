@@ -1,3 +1,4 @@
+import 'package:assignment/controller/conversation_actions.dart';
 import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/route.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     final userActions = Provider.of<UserActions>(context);
+    final conversationActions = Provider.of<ConversationActions>(context);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -54,8 +56,14 @@ class _SearchState extends State<Search> {
                           var fname = snapshot.data![index]!['firstName'];
                           var lname = snapshot.data![index]!['lastName'];
                           return InkWell(
-                            onTap: () => Navigator.pushNamed(
-                                context, RouteGenerator.messagePage),
+                            onTap: () {
+                              if (userActions.userData.conversations
+                                  .contains(snapshot.data![index]!['uid'])) {}
+                              userActions.createConversation(
+                                  snapshot.data![index]!['uid']);
+                              Navigator.pushNamed(
+                                  context, RouteGenerator.messagePage);
+                            },
                             child: ListTile(
                               title: Text("$fname $lname"),
                             ),
