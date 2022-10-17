@@ -19,7 +19,7 @@ class SignIn extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        backgroundColor: lightTheme ? Colors.white : Colors.transparent,
+        backgroundColor: !lightTheme ? Colors.white : Colors.transparent,
         body: SingleChildScrollView(
           child: Container(
             height: MediaQuery.of(context).size.height,

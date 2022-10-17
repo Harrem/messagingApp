@@ -122,10 +122,6 @@ class _SignUpState extends State<SignUp> {
                                 return null;
                               },
                             );
-                            if (auth.checkUser()) {
-                              Navigator.pushNamed(
-                                  context, RouteGenerator.createProfile);
-                            }
                           }
                         },
                         child: Row(
