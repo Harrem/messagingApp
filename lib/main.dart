@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:assignment/controller/bottom_nav_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'route.dart';
 import 'firebase_options.dart';
@@ -76,8 +77,11 @@ class _MyAppState extends State<MyApp> {
       ],
       child: Consumer<ThemeController>(
         builder: (((context, value, child) {
-          var sysBrightness = MediaQuery.of(context).platformBrightness;
-          value.setSysThemeMode(sysBrightness == Brightness.dark);
+          if (value.isDefault) {
+            var sysBrightness =
+                SchedulerBinding.instance.window.platformBrightness;
+            value.setSysThemeMode(sysBrightness == Brightness.dark);
+          }
           return MaterialApp(
             initialRoute: FirebaseAuth.instance.currentUser != null
                 ? RouteGenerator.loadingPage
@@ -87,7 +91,7 @@ class _MyAppState extends State<MyApp> {
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             title: 'Messenger',
-            theme: value.themeMode,
+            theme: value.themeData,
           );
         })),
       ),

@@ -1,3 +1,5 @@
+import 'package:assignment/screens/edit_profile_pic.dart';
+import 'package:assignment/screens/loading.dart';
 import 'package:assignment/screens/messaging.dart';
 import 'package:flutter/material.dart';
 import 'screens/create_profile.dart';
@@ -19,6 +21,8 @@ class RouteGenerator {
   static const String resetPassword = "./screens/reset_password.dart";
   static const String searchPage = "./screens/search.dart";
   static const String messagePage = "./screens/message.dart";
+  static const String loadingPage = "./screens/loading.dart";
+  static const String editProfilePic = "./screens/edit_profile_pic.dart";
 
   RouteGenerator._();
 
@@ -42,8 +46,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Search());
       case messagePage:
         return MaterialPageRoute(builder: (_) => const MessageScreen());
+      case editProfilePic:
+        return MaterialPageRoute(builder: (_) => const EditProfilePicPage());
+      case loadingPage:
+        return MaterialPageRoute(builder: (_) => const Loading());
       default:
-        return MaterialPageRoute(builder: (_) => const Home());
+        return MaterialPageRoute(builder: (_) => const Loading());
     }
   }
 }
