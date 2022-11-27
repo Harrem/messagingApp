@@ -59,8 +59,10 @@ class Settings extends StatelessWidget {
               const Divider(),
               OutlinedButton(
                 onPressed: () {
+                  userActions.deleteUserData();
                   Auth().signout().then((value) =>
-                      Navigator.pushNamed(context, RouteGenerator.signIn));
+                      Navigator.pushReplacementNamed(
+                          context, RouteGenerator.signIn));
                   // if (Auth().firebaseAuth.currentUser == null) {
                   // }
                 },

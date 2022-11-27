@@ -1,57 +1,54 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
-import 'message.dart';
-
 class Conversation {
-  String conversationId;
+  String cid;
   DateTime createdDate;
-  List<Message> messages;
-  String docRef;
+  String? docRef;
+  String user1;
+  String user2;
 
   Conversation({
-    required this.conversationId,
+    required this.cid,
     required this.createdDate,
-    required this.messages,
-    required this.docRef,
+    this.docRef,
+    required this.user1,
+    required this.user2,
   });
 
   Conversation copyWith({
-    String? conversationId,
+    String? cid,
     DateTime? createdDate,
-    List<Message>? messages,
     String? docRef,
+    String? user1,
+    String? user2,
   }) {
     return Conversation(
-      conversationId: conversationId ?? this.conversationId,
+      cid: cid ?? this.cid,
       createdDate: createdDate ?? this.createdDate,
-      messages: messages ?? this.messages,
       docRef: docRef ?? this.docRef,
+      user1: user1 ?? this.user1,
+      user2: user2 ?? this.user2,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'conversationId': conversationId,
+      'cid': cid,
       'createdDate': createdDate.millisecondsSinceEpoch,
-      'messages': messages.map((x) => x.toMap()).toList(),
       'docRef': docRef,
+      'user1': user1,
+      'user2': user2,
     };
   }
 
   factory Conversation.fromMap(Map<String, dynamic> map) {
     return Conversation(
-      conversationId: map['conversationId'] as String,
+      cid: map['cid'] as String,
       createdDate:
           DateTime.fromMillisecondsSinceEpoch(map['createdDate'] as int),
-      messages: List<Message>.from(
-        (map['messages'] as List<dynamic>).map<Message>(
-          (x) => Message.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      docRef: map['docRef'] as String,
+      docRef: map['docRef'] != null ? map['docRef'] as String : null,
+      user1: map['user1'] as String,
+      user2: map['user2'] as String,
     );
   }
 
@@ -62,24 +59,26 @@ class Conversation {
 
   @override
   String toString() {
-    return 'Conversation(conversationId: $conversationId, createdDate: $createdDate, messages: $messages, docRef: $docRef)';
+    return 'Conversation(cid: $cid, createdDate: $createdDate, docRef: $docRef, user1: $user1, user2: $user2)';
   }
 
   @override
   bool operator ==(covariant Conversation other) {
     if (identical(this, other)) return true;
 
-    return other.conversationId == conversationId &&
+    return other.cid == cid &&
         other.createdDate == createdDate &&
-        listEquals(other.messages, messages) &&
-        other.docRef == docRef;
+        other.docRef == docRef &&
+        other.user1 == user1 &&
+        other.user2 == user2;
   }
 
   @override
   int get hashCode {
-    return conversationId.hashCode ^
+    return cid.hashCode ^
         createdDate.hashCode ^
-        messages.hashCode ^
-        docRef.hashCode;
+        docRef.hashCode ^
+        user1.hashCode ^
+        user2.hashCode;
   }
 }

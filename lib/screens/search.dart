@@ -1,5 +1,7 @@
 import 'package:assignment/controller/conversation_actions.dart';
 import 'package:assignment/controller/user_profile_actions.dart';
+import 'package:assignment/models/conversations.dart';
+import 'package:assignment/models/user_data.dart';
 import 'package:assignment/route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -53,16 +55,15 @@ class _SearchState extends State<Search> {
                         shrinkWrap: true,
                         itemCount: snapshot.data!.length,
                         itemBuilder: (BuildContext context, int index) {
-                          var fname = snapshot.data![index]!['firstName'];
-                          var lname = snapshot.data![index]!['lastName'];
+                          var withUser =
+                              UserData.fromMap(snapshot.data![index]!);
+                          var fname = withUser.firstName;
+                          var lname = withUser.lastName;
                           return InkWell(
                             onTap: () {
-                              if (userActions.userData.conversations
-                                  .contains(snapshot.data![index]!['uid'])) {}
-                              userActions.createConversation(
-                                  snapshot.data![index]!['uid']);
                               Navigator.pushNamed(
-                                  context, RouteGenerator.messagePage);
+                                  context, RouteGenerator.messagePage,
+                                  arguments: withUser);
                             },
                             child: ListTile(
                               title: Text("$fname $lname"),

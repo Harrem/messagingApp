@@ -1,3 +1,4 @@
+import 'package:assignment/models/user_data.dart';
 import 'package:assignment/screens/edit_profile_pic.dart';
 import 'package:assignment/screens/loading.dart';
 import 'package:assignment/screens/messaging.dart';
@@ -20,7 +21,7 @@ class RouteGenerator {
   static const String forgotPassword = "./screens/forgot_password.dart";
   static const String resetPassword = "./screens/reset_password.dart";
   static const String searchPage = "./screens/search.dart";
-  static const String messagePage = "./screens/message.dart";
+  static const String messagePage = "./screens/messaging.dart";
   static const String loadingPage = "./screens/loading.dart";
   static const String editProfilePic = "./screens/edit_profile_pic.dart";
 
@@ -45,7 +46,10 @@ class RouteGenerator {
       case searchPage:
         return MaterialPageRoute(builder: (_) => Search());
       case messagePage:
-        return MaterialPageRoute(builder: (_) => const MessageScreen());
+        debugPrint("Going to MessageScreen");
+        return MaterialPageRoute(
+            builder: (_) =>
+                MessageScreen(toUser: settings.arguments as UserData));
       case editProfilePic:
         return MaterialPageRoute(builder: (_) => const EditProfilePicPage());
       case loadingPage:

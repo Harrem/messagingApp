@@ -82,7 +82,10 @@ class UserData {
       profilePictureUrl: map['profilePictureUrl'] as String,
       isActive: map['isActive'] as bool,
       conversations: List<Conversation>.from(
-        (map['conversations'] as List<dynamic>).map<Conversation>(
+        ((map['conversations'] == null)
+                ? []
+                : map['conversations'] as List<dynamic>)
+            .map<Conversation>(
           (x) => Conversation.fromMap(x as Map<String, dynamic>),
         ),
       ),

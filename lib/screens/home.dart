@@ -81,14 +81,16 @@ class Home extends StatelessWidget {
                                   itemBuilder: ((context, index) {
                                     return Column(
                                       children: [
-                                        ConvTile(
-                                          title: snapshot
-                                              .data![index].conversationId,
-                                          lastMessage: covs![index]
-                                                  .messages
-                                                  .isNotEmpty
-                                              ? covs[index].messages.last.text
-                                              : "no messages",
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pushNamed(context,
+                                                RouteGenerator.messagePage,
+                                                arguments:
+                                                    snapshot.data![index].cid);
+                                          },
+                                          child: ConvTile(
+                                            title: snapshot.data![index].cid,
+                                          ),
                                         ),
                                         const SizedBox(height: 15),
                                       ],

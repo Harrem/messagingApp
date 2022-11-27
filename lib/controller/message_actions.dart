@@ -5,9 +5,16 @@ import 'package:flutter/material.dart';
 class MessageActions extends ChangeNotifier {
   final firestore = FirebaseFirestore.instance;
 
-  Future<void> sendMessage(String text) async {
-    Message message =
-        Message(text: text, sentDate: DateTime.now(), read: false);
+  Future<void> sendMessage(
+      String text, String toUid, String fromUid, String cid) async {
+    Message message = Message(
+        cid: cid,
+        fromUid: fromUid,
+        toUid: toUid,
+        text: text,
+        sentDate: DateTime.now(),
+        didRead: false,
+        isDelivered: false);
     firestore.collection("conversations").doc().set(message.toMap());
     debugPrint("message Sent");
   }

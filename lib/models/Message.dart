@@ -4,22 +4,39 @@ import 'dart:convert';
 class Message {
   String text;
   DateTime sentDate;
-  bool read;
+  String cid;
+  String fromUid;
+  String toUid;
+  bool isDelivered;
+  bool didRead;
+
   Message({
     required this.text,
     required this.sentDate,
-    required this.read,
+    required this.cid,
+    required this.fromUid,
+    required this.toUid,
+    required this.isDelivered,
+    required this.didRead,
   });
 
   Message copyWith({
     String? text,
     DateTime? sentDate,
-    bool? read,
+    String? cid,
+    String? fromUid,
+    String? toUid,
+    bool? isDelivered,
+    bool? didRead,
   }) {
     return Message(
       text: text ?? this.text,
       sentDate: sentDate ?? this.sentDate,
-      read: read ?? this.read,
+      cid: cid ?? this.cid,
+      fromUid: fromUid ?? this.fromUid,
+      toUid: toUid ?? this.toUid,
+      isDelivered: isDelivered ?? this.isDelivered,
+      didRead: didRead ?? this.didRead,
     );
   }
 
@@ -27,7 +44,11 @@ class Message {
     return <String, dynamic>{
       'text': text,
       'sentDate': sentDate.millisecondsSinceEpoch,
-      'read': read,
+      'cid': cid,
+      'fromUid': fromUid,
+      'toUid': toUid,
+      'isDelivered': isDelivered,
+      'didRead': didRead,
     };
   }
 
@@ -35,7 +56,11 @@ class Message {
     return Message(
       text: map['text'] as String,
       sentDate: DateTime.fromMillisecondsSinceEpoch(map['sentDate'] as int),
-      read: map['read'] as bool,
+      cid: map['cid'] as String,
+      fromUid: map['fromUid'] as String,
+      toUid: map['toUid'] as String,
+      isDelivered: map['isDelivered'] as bool,
+      didRead: map['didRead'] as bool,
     );
   }
 
@@ -45,7 +70,9 @@ class Message {
       Message.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'Message(text: $text, sentDate: $sentDate, read: $read)';
+  String toString() {
+    return 'Message(text: $text, sentDate: $sentDate, cid: $cid, fromUid: $fromUid, toUid: $toUid, isDelivered: $isDelivered, didRead: $didRead)';
+  }
 
   @override
   bool operator ==(covariant Message other) {
@@ -53,9 +80,21 @@ class Message {
 
     return other.text == text &&
         other.sentDate == sentDate &&
-        other.read == read;
+        other.cid == cid &&
+        other.fromUid == fromUid &&
+        other.toUid == toUid &&
+        other.isDelivered == isDelivered &&
+        other.didRead == didRead;
   }
 
   @override
-  int get hashCode => text.hashCode ^ sentDate.hashCode ^ read.hashCode;
+  int get hashCode {
+    return text.hashCode ^
+        sentDate.hashCode ^
+        cid.hashCode ^
+        fromUid.hashCode ^
+        toUid.hashCode ^
+        isDelivered.hashCode ^
+        didRead.hashCode;
+  }
 }

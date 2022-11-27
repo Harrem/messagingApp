@@ -80,24 +80,28 @@ class UserActions extends ChangeNotifier {
     return list;
   }
 
-  Future<void> createConversation(String withuserid) async {
+  Future<Conversation> createConversation(String fromUid, String toUid) async {
     final firestore = FirebaseFirestore.instance;
-    final docRef =
-        await firestore.collection("conversations").add({'toUid': withuserid});
-    DocumentReference ref = docRef;
+    final docRef = await firestore
+        .collection("conversations")
+        .add({'toUid': toUid, 'fromUid': fromUid});
+    String ref = docRef.id;
     Conversation conv = Conversation(
-      docRef: ref.path,
-      conversationId: ref.id,
-      createdDate: DateTime.now(),
-      messages: [],
-    );
-    debugPrint(ref.path);
-    if (userData.conversations == null) {
-      userData.conversations = [conv];
-    } else {
-      userData.conversations.add(conv);
-    }
+        cid: ref, createdDate: DateTime.now(), user1: fromUid, user2: toUid);
+
+    userData.conversations.add(conv);
+
+    await firestore.collection('users').doc(toUid).get().then((value) async {
+      var list = value.data()!['conversations'] as List<dynamic>;
+      list.add(conv.toMap());
+      await firestore
+          .collection('users')
+          .doc(toUid)
+          .update({"conversations": list});
+    });
+
     syncUserData();
+    return conv;
   }
 
   Future<List<Conversation>?> getConversations() async {
@@ -109,5 +113,22 @@ class UserActions extends ChangeNotifier {
     firestore.collection('users').doc(userData.uid).set(userData.toMap()).then(
           (value) => debugPrint("User Data synced"),
         );
+    notifyListeners();
+  }
+
+  void deleteUserData() {
+    uid = "";
+    userData = UserData(
+        uid: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        birthDate: "",
+        joinedDate: DateTime.now(),
+        gender: "",
+        profilePictureUrl: "",
+        isActive: false,
+        conversations: []);
+    notifyListeners();
   }
 }
