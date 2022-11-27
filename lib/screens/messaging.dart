@@ -4,15 +4,15 @@ import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/models/conversations.dart';
 import 'package:assignment/models/message.dart';
 import 'package:assignment/models/user_data.dart';
+import 'package:assignment/models/with_user_data.dart';
 import 'package:assignment/widgets/custom_widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:assignment/services/cloudStore.dart';
 import 'package:provider/provider.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key? key, required this.toUser}) : super(key: key);
-  final UserData toUser;
+  final WithUserData toUser;
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
@@ -40,7 +40,7 @@ class _MessageScreenState extends State<MessageScreen> {
       create: (context) => Loading(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(""),
+          title: Text(widget.toUser.fullName),
         ),
         body: checkConv(
                     userActions.userData, userActions.uid, widget.toUser.uid) ==
@@ -55,19 +55,16 @@ class _MessageScreenState extends State<MessageScreen> {
                       child: SizedBox(
                         width: double.infinity,
                         child: Container(
-                          margin: const EdgeInsets.all(10),
-                          padding: const EdgeInsets.all(20),
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 10),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
-                              color: Colors.grey[900]),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: store.firestore
-                                .collection('conversations')
-                                .doc(cid!)
-                                .collection('messages')
-                                .snapshots(),
+                              color: Colors.black),
+                          child: StreamBuilder(
+                            stream: CloudStore().readMessage(cid!),
                             builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                                AsyncSnapshot<List<Message>?> snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return const Center(
@@ -75,35 +72,28 @@ class _MessageScreenState extends State<MessageScreen> {
                               }
                               if (snapshot.hasData) {
                                 if (snapshot.data != null) {
-                                  debugPrint("empty Stream");
+                                  var messages = snapshot.data!;
+                                  debugPrint("${messages.isEmpty}");
                                   return ListView.builder(
-                                      shrinkWrap: true,
-                                      reverse: true,
-                                      itemCount: snapshot.data!.docs.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          children: [
-                                            ListTile(
-                                              title: Text(
-                                                  (snapshot.data!.docs[index]
-                                                          .data()
-                                                      as Map<String,
-                                                          dynamic>)['msg'],
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium),
-                                              leading: Text(
-                                                "uid",
-                                                // snapshot.data.docs[index]['user'],
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .subtitle2,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                          ],
-                                        );
-                                      });
+                                    shrinkWrap: true,
+                                    reverse: true,
+                                    itemCount: messages.length,
+                                    itemBuilder: (context, index) {
+                                      debugPrint(messages.first.text);
+                                      return messages[index].fromUid ==
+                                              userActions.uid
+                                          ? ChatBubbleSelf(
+                                              message: messages[index],
+                                              imageUrl: userActions
+                                                  .userData.profilePictureUrl,
+                                            )
+                                          : ChatBubbleOther(
+                                              message: messages[index],
+                                              imageUrl: widget
+                                                  .toUser.profilePictureUrl,
+                                            );
+                                    },
+                                  );
                                 }
                               }
                               return const Center(
@@ -190,7 +180,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
 class CreateConversationWidget extends StatelessWidget {
   const CreateConversationWidget({super.key, required this.withUser});
-  final UserData withUser;
+  final WithUserData withUser;
   @override
   Widget build(BuildContext context) {
     final loadingProvider = Provider.of<Loading>(context);
@@ -211,14 +201,14 @@ class CreateConversationWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "${withUser.firstName} ${withUser.lastName}",
+                    withUser.fullName,
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ],
               ),
               const SizedBox(height: 25),
               Text(
-                "You don't have conversation with ${withUser.firstName}",
+                "You don't have conversation with ${withUser.fullName}",
                 style: Theme.of(context).textTheme.subtitle2,
               ),
               const SizedBox(height: 5),
@@ -255,6 +245,68 @@ class CreateConversationWidget extends StatelessWidget {
                 : const Text("Start Conversation"),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class ChatBubbleSelf extends StatelessWidget {
+  const ChatBubbleSelf(
+      {super.key, required this.message, required this.imageUrl});
+  final Message message;
+  final String imageUrl;
+  @override
+  Widget build(BuildContext context) {
+    return FractionallySizedBox(
+      alignment: Alignment.centerRight,
+      widthFactor: 0.7,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                color: Colors.blue[700],
+                borderRadius: BorderRadius.circular(15)),
+            child: Text(message.text),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class ChatBubbleOther extends StatelessWidget {
+  const ChatBubbleOther(
+      {super.key, required this.message, required this.imageUrl});
+  final Message message;
+  final String imageUrl;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.end,
+          children: [
+            OvalPicture(
+              image: Image.network(imageUrl),
+              size: 30,
+            ),
+            const SizedBox(width: 15),
+            Container(
+              constraints: const BoxConstraints(maxWidth: 100),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.grey[800]),
+              child: Text(message.text,
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }

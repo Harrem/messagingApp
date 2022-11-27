@@ -1,4 +1,5 @@
 import 'package:assignment/models/user_data.dart';
+import 'package:assignment/models/with_user_data.dart';
 import 'package:assignment/screens/edit_profile_pic.dart';
 import 'package:assignment/screens/loading.dart';
 import 'package:assignment/screens/messaging.dart';
@@ -49,7 +50,7 @@ class RouteGenerator {
         debugPrint("Going to MessageScreen");
         return MaterialPageRoute(
             builder: (_) =>
-                MessageScreen(toUser: settings.arguments as UserData));
+                MessageScreen(toUser: settings.arguments as WithUserData));
       case editProfilePic:
         return MaterialPageRoute(builder: (_) => const EditProfilePicPage());
       case loadingPage:

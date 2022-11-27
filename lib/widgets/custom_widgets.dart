@@ -40,7 +40,7 @@ class ConvTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const OvalPicture(),
+      leading: OvalPicture(image: profileImage),
       trailing: const Icon(Icons.delivery_dining_outlined),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

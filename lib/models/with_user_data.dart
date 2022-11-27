@@ -5,29 +5,25 @@ class WithUserData {
   String uid;
   String fullName;
   bool isActive;
-  String profileUrl;
-  int lastSeenAt;
+  String profilePictureUrl;
   WithUserData({
     required this.uid,
     required this.fullName,
     required this.isActive,
-    required this.profileUrl,
-    required this.lastSeenAt,
+    required this.profilePictureUrl,
   });
 
   WithUserData copyWith({
     String? uid,
     String? fullName,
     bool? isActive,
-    String? profileUrl,
-    int? lastSeenAt,
+    String? profilePictureUrl,
   }) {
     return WithUserData(
       uid: uid ?? this.uid,
       fullName: fullName ?? this.fullName,
       isActive: isActive ?? this.isActive,
-      profileUrl: profileUrl ?? this.profileUrl,
-      lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
     );
   }
 
@@ -36,18 +32,16 @@ class WithUserData {
       'uid': uid,
       'fullName': fullName,
       'isActive': isActive,
-      'profileUrl': profileUrl,
-      'lastSeenAt': lastSeenAt,
+      'profilePictureUrl': profilePictureUrl,
     };
   }
 
   factory WithUserData.fromMap(Map<String, dynamic> map) {
     return WithUserData(
       uid: map['uid'] as String,
-      fullName: map['fullName'] as String,
+      fullName: "${map['firstName']} ${map['lastName']}",
       isActive: map['isActive'] as bool,
-      profileUrl: map['profileUrl'] as String,
-      lastSeenAt: map['lastSeenAt'] as int,
+      profilePictureUrl: map['profilePictureUrl'] as String,
     );
   }
 
@@ -58,7 +52,7 @@ class WithUserData {
 
   @override
   String toString() {
-    return 'WithUserData(uid: $uid, fullName: $fullName, isActive: $isActive, profileUrl: $profileUrl, lastSeenAt: $lastSeenAt)';
+    return 'WithUserData(uid: $uid, fullName: $fullName, isActive: $isActive, profilePictureUrl: $profilePictureUrl)';
   }
 
   @override
@@ -68,8 +62,7 @@ class WithUserData {
     return other.uid == uid &&
         other.fullName == fullName &&
         other.isActive == isActive &&
-        other.profileUrl == profileUrl &&
-        other.lastSeenAt == lastSeenAt;
+        other.profilePictureUrl == profilePictureUrl;
   }
 
   @override
@@ -77,7 +70,6 @@ class WithUserData {
     return uid.hashCode ^
         fullName.hashCode ^
         isActive.hashCode ^
-        profileUrl.hashCode ^
-        lastSeenAt.hashCode;
+        profilePictureUrl.hashCode;
   }
 }

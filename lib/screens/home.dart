@@ -2,7 +2,9 @@ import 'package:assignment/controller/bottom_nav_controller.dart';
 import 'package:assignment/controller/theme_controller.dart';
 import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/models/conversations.dart';
+import 'package:assignment/models/with_user_data.dart';
 import 'package:assignment/route.dart';
+import 'package:assignment/services/cloudStore.dart';
 import 'package:assignment/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,55 +65,64 @@ class Home extends StatelessWidget {
                 body: Column(
                   children: [
                     Expanded(
-                      child: FutureBuilder<List<Conversation>?>(
-                          future: userActions.getConversations(),
-                          builder: (context, snapshot) {
-                            final covs = snapshot.data;
+                      child: ListView.builder(
+                        itemCount: userActions.userData.conversations.length,
+                        shrinkWrap: true,
+                        itemBuilder: ((context, index) {
+                          String? withUid;
+                          if (userActions.userData.conversations[index].user1 !=
+                              userActions.uid) {
+                            withUid =
+                                userActions.userData.conversations[index].user1;
+                          } else {
+                            withUid =
+                                userActions.userData.conversations[index].user2;
+                          }
 
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasData) {
-                                return ListView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: ((context, index) {
-                                    return Column(
+                          return FutureBuilder<WithUserData>(
+                            future: CloudStore().getWithUser(withUid),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const Center(
+                                  child: Text(
+                                    "Start Conversation with you friends",
+                                  ),
+                                );
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return snapshot.data == null
+                                  ? const Center(
+                                      child: Text("no data"),
+                                    )
+                                  : Column(
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            Navigator.pushNamed(context,
-                                                RouteGenerator.messagePage,
-                                                arguments:
-                                                    snapshot.data![index].cid);
+                                            Navigator.pushNamed(
+                                              context,
+                                              RouteGenerator.messagePage,
+                                              arguments: snapshot.data!,
+                                            );
                                           },
                                           child: ConvTile(
-                                            title: snapshot.data![index].cid,
+                                            title: snapshot.data!.fullName,
+                                            profileImage: Image.network(snapshot
+                                                .data!.profilePictureUrl),
                                           ),
                                         ),
                                         const SizedBox(height: 15),
                                       ],
                                     );
-                                  }),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                  child: Text(snapshot.error.toString()),
-                                );
-                              } else {
-                                return const Center(
-                                  child: Text("Data is null"),
-                                );
-                              }
-                            }
-                            return const Center(
-                              child: Text("Connnection Error"),
-                            );
-                          }),
-                    )
+                            },
+                          );
+                        }),
+                      ),
+                    ),
                   ],
                 ),
                 bottomNavigationBar: BottomAppBar(

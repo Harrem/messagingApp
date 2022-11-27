@@ -59,21 +59,9 @@ class UserActions extends ChangeNotifier {
       String str =
           "${e.data()['firstName'].toString().toLowerCase()} ${e.data()['lastName'].toString().toLowerCase()}";
       if (str.contains(text.toLowerCase())) {
-        debugPrint(str);
         list.add(e.data());
       }
     }
-    debugPrint(list.length.toString());
-    // final matchedUsers = users.docs.map((e) {
-    //   final name = e.data()['firstName'];
-    //   if (text.isEmpty) {
-    //     return e.data();
-    //   } else if (name.toString().trim().toLowerCase() ==
-    //       text.trim().toLowerCase()) {
-    //     return e.data();
-    //   }
-    //   return e.data();
-    // }).toList();
     if (list.isEmpty) {
       return [];
     }
@@ -104,7 +92,7 @@ class UserActions extends ChangeNotifier {
     return conv;
   }
 
-  Future<List<Conversation>?> getConversations() async {
+  List<Conversation> getConversations() {
     return userData.conversations;
   }
 

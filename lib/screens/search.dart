@@ -2,6 +2,7 @@ import 'package:assignment/controller/conversation_actions.dart';
 import 'package:assignment/controller/user_profile_actions.dart';
 import 'package:assignment/models/conversations.dart';
 import 'package:assignment/models/user_data.dart';
+import 'package:assignment/models/with_user_data.dart';
 import 'package:assignment/route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,9 +57,7 @@ class _SearchState extends State<Search> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (BuildContext context, int index) {
                           var withUser =
-                              UserData.fromMap(snapshot.data![index]!);
-                          var fname = withUser.firstName;
-                          var lname = withUser.lastName;
+                              WithUserData.fromMap(snapshot.data![index]!);
                           return InkWell(
                             onTap: () {
                               Navigator.pushNamed(
@@ -66,7 +65,7 @@ class _SearchState extends State<Search> {
                                   arguments: withUser);
                             },
                             child: ListTile(
-                              title: Text("$fname $lname"),
+                              title: Text(withUser.fullName),
                             ),
                           );
                         },

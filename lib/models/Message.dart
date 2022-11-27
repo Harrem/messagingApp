@@ -6,7 +6,6 @@ class Message {
   DateTime sentDate;
   String cid;
   String fromUid;
-  String toUid;
   bool isDelivered;
   bool didRead;
 
@@ -15,7 +14,6 @@ class Message {
     required this.sentDate,
     required this.cid,
     required this.fromUid,
-    required this.toUid,
     required this.isDelivered,
     required this.didRead,
   });
@@ -25,7 +23,6 @@ class Message {
     DateTime? sentDate,
     String? cid,
     String? fromUid,
-    String? toUid,
     bool? isDelivered,
     bool? didRead,
   }) {
@@ -34,7 +31,6 @@ class Message {
       sentDate: sentDate ?? this.sentDate,
       cid: cid ?? this.cid,
       fromUid: fromUid ?? this.fromUid,
-      toUid: toUid ?? this.toUid,
       isDelivered: isDelivered ?? this.isDelivered,
       didRead: didRead ?? this.didRead,
     );
@@ -46,7 +42,6 @@ class Message {
       'sentDate': sentDate.millisecondsSinceEpoch,
       'cid': cid,
       'fromUid': fromUid,
-      'toUid': toUid,
       'isDelivered': isDelivered,
       'didRead': didRead,
     };
@@ -58,7 +53,6 @@ class Message {
       sentDate: DateTime.fromMillisecondsSinceEpoch(map['sentDate'] as int),
       cid: map['cid'] as String,
       fromUid: map['fromUid'] as String,
-      toUid: map['toUid'] as String,
       isDelivered: map['isDelivered'] as bool,
       didRead: map['didRead'] as bool,
     );
@@ -71,30 +65,29 @@ class Message {
 
   @override
   String toString() {
-    return 'Message(text: $text, sentDate: $sentDate, cid: $cid, fromUid: $fromUid, toUid: $toUid, isDelivered: $isDelivered, didRead: $didRead)';
+    return 'Message(text: $text, sentDate: $sentDate, cid: $cid, fromUid: $fromUid, isDelivered: $isDelivered, didRead: $didRead)';
   }
 
   @override
   bool operator ==(covariant Message other) {
     if (identical(this, other)) return true;
-
-    return other.text == text &&
-        other.sentDate == sentDate &&
-        other.cid == cid &&
-        other.fromUid == fromUid &&
-        other.toUid == toUid &&
-        other.isDelivered == isDelivered &&
-        other.didRead == didRead;
+  
+    return 
+      other.text == text &&
+      other.sentDate == sentDate &&
+      other.cid == cid &&
+      other.fromUid == fromUid &&
+      other.isDelivered == isDelivered &&
+      other.didRead == didRead;
   }
 
   @override
   int get hashCode {
     return text.hashCode ^
-        sentDate.hashCode ^
-        cid.hashCode ^
-        fromUid.hashCode ^
-        toUid.hashCode ^
-        isDelivered.hashCode ^
-        didRead.hashCode;
+      sentDate.hashCode ^
+      cid.hashCode ^
+      fromUid.hashCode ^
+      isDelivered.hashCode ^
+      didRead.hashCode;
   }
 }
