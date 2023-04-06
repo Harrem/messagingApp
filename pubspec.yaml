@@ -33,10 +33,10 @@ dependencies:
   url_launcher: ^6.0.0
   provider: any
   google_fonts: ^3.0.1
-  cloud_firestore: ^3.4.2
-  firebase_core: ^1.20.0
-  firebase_auth: ^3.6.4
-  firebase_storage: ^10.3.10
+  cloud_firestore: ^4.5.0
+  firebase_core: ^2.9.0
+  firebase_auth: ^4.4.0
+  firebase_storage: ^11.1.0
   google_nav_bar: any
   infinite_scroll_pagination: ^3.2.0
   intl: any

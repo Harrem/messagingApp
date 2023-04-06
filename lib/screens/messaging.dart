@@ -20,6 +20,7 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   CloudStore store = CloudStore();
   String message = "";
   String? cid;
@@ -65,32 +66,33 @@ class _MessageScreenState extends State<MessageScreen> {
                             stream: CloudStore().readMessage(cid!),
                             builder: (context,
                                 AsyncSnapshot<List<Message>?> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
+                              // if (snapshot.connectionState ==
+                              //     ConnectionState.waiting) {
+                              // }
                               if (snapshot.hasData) {
                                 if (snapshot.data != null) {
                                   var messages = snapshot.data!;
                                   debugPrint("${messages.isEmpty}");
-                                  return ListView.builder(
+                                  return AnimatedList(
+                                    key: _listKey,
                                     shrinkWrap: true,
                                     reverse: true,
-                                    itemCount: messages.length,
-                                    itemBuilder: (context, index) {
-                                      debugPrint(messages.first.text);
+                                    initialItemCount: messages.length,
+                                    itemBuilder: (context, index, animation) {
+                                      // debugPrint(messages.first.text);
                                       return messages[index].fromUid ==
                                               userActions.uid
                                           ? ChatBubbleSelf(
                                               message: messages[index],
                                               imageUrl: userActions
                                                   .userData.profilePictureUrl,
+                                              animation: animation,
                                             )
                                           : ChatBubbleOther(
                                               message: messages[index],
                                               imageUrl: widget
                                                   .toUser.profilePictureUrl,
+                                              animation: animation,
                                             );
                                     },
                                   );
@@ -252,26 +254,37 @@ class CreateConversationWidget extends StatelessWidget {
 
 class ChatBubbleSelf extends StatelessWidget {
   const ChatBubbleSelf(
-      {super.key, required this.message, required this.imageUrl});
+      {super.key,
+      required this.message,
+      required this.imageUrl,
+      required this.animation});
   final Message message;
   final String imageUrl;
+  final Animation<double> animation;
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      alignment: Alignment.centerRight,
-      widthFactor: 0.7,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                color: Colors.blue[700],
-                borderRadius: BorderRadius.circular(15)),
-            child: Text(message.text),
+    return SizeTransition(
+      sizeFactor: animation,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        alignment: Alignment.centerRight,
+        child: FractionallySizedBox(
+          alignment: Alignment.centerRight,
+          widthFactor: 0.7,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                    color: Colors.blue[700],
+                    borderRadius: BorderRadius.circular(15)),
+                child: Text(message.text),
+              ),
+              const SizedBox(height: 10),
+            ],
           ),
-          const SizedBox(height: 10),
-        ],
+        ),
       ),
     );
   }
@@ -279,35 +292,43 @@ class ChatBubbleSelf extends StatelessWidget {
 
 class ChatBubbleOther extends StatelessWidget {
   const ChatBubbleOther(
-      {super.key, required this.message, required this.imageUrl});
+      {super.key,
+      required this.message,
+      required this.imageUrl,
+      required this.animation});
   final Message message;
   final String imageUrl;
+  final Animation<double> animation;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.end,
-          children: [
-            OvalPicture(
-              image: Image.network(imageUrl),
-              size: 30,
-            ),
-            const SizedBox(width: 15),
-            Container(
-              constraints: const BoxConstraints(maxWidth: 100),
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.grey[800]),
-              child: Text(message.text,
-                  style: Theme.of(context).textTheme.bodyMedium),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-      ],
+    return SizeTransition(
+      sizeFactor: animation,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.end,
+            children: [
+              OvalPicture(
+                image: Image.network(imageUrl),
+                size: 30,
+              ),
+              const SizedBox(width: 15),
+              Container(
+                constraints: const BoxConstraints(maxWidth: 100),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.grey[800]),
+                child: Text(message.text,
+                    style: Theme.of(context).textTheme.bodyMedium),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
     );
   }
 }

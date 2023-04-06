@@ -10,7 +10,6 @@ class MessageActions extends ChangeNotifier {
     Message message = Message(
         cid: cid,
         fromUid: fromUid,
-        toUid: toUid,
         text: text,
         sentDate: DateTime.now(),
         didRead: false,

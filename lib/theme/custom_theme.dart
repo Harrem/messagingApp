@@ -47,13 +47,13 @@ class CustomTheme {
 // Dark Mode
   ThemeData get darkTheme {
     return ThemeData(
-      scaffoldBackgroundColor: Colors.black,
+      scaffoldBackgroundColor: Color.fromARGB(255, 44, 47, 55),
       appBarTheme: const AppBarTheme(color: Colors.black),
       bottomAppBarColor: Colors.black,
       bottomNavigationBarTheme:
           const BottomNavigationBarThemeData(backgroundColor: Colors.black),
       colorScheme: const ColorScheme.dark(
-        primary: Color.fromARGB(255, 220, 220, 220),
+        primary: Color.fromARGB(255, 44, 47, 55),
         background: Colors.black,
       ),
       brightness: Brightness.dark,
