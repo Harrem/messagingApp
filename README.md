@@ -1,4 +1,4 @@
-# Messaging App
+# Direct Messaging App
 
 A new Flutter project for direct messaging.
 
